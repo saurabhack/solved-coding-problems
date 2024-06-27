@@ -8,18 +8,28 @@ class node{
         data=val;
         next=NULL;
     }
+
 };
 void push(node* &head,int data){
     node* newNode=new node(data);
     if(head==NULL){
         head=newNode;
-        return;
+        return ;
     }
     node* current=head;
     while(current->next!=NULL){
         current=current->next;
     }
     current->next=newNode;
+}
+void display(node* head){
+    node* current=head;
+    
+    while(current!=NULL){
+        cout<<current->data<<"->";
+        current=current->next;
+    }
+    cout<<"NULL"<<endl;
 }
 node* middle(node* head){
     node* slow=head;
@@ -31,59 +41,67 @@ node* middle(node* head){
     return slow;
 }
 node* merge(node* left,node* right){
-    if(left==NULL){
-        return left;
-    }
-    if (right==NULL)
-    {
+   if(left == NULL)
         return right;
-    }
-    node* newNode=new node(-1);
-    while(left!=NULL or right!=NULL){
-        if(left!=NULL and left->data<right->data){
-            newNode->next=left;
-            left=left->next;
-        }else if(right!=NULL and right->data<left->data){
-            newNode->next=right;
-            right=right->next;
+    
+    if(right == NULL)
+        return left;
+    
+    node* ans = new node(-1);
+    node* temp = ans;
+    
+    //merge 2 sorted Linked List
+    while(left != NULL && right != NULL) {
+        if(left -> data < right -> data ) {
+            temp -> next = left;
+            temp = left;
+            left = left -> next;
         }
-        newNode=newNode->next;
-    }
-    while(left!=NULL){
-        newNode->next=left;
-        left=left->next;
-        newNode=newNode->next;
+        else
+        {
+            temp -> next = right;
+            temp = right;
+            right = right -> next;
+        }
     }
     
-    while(right!=NULL){
-        newNode->next=right;
-        right=right->next;
-        newNode=newNode->next;
+    while(left != NULL) {
+        temp -> next = left;
+        temp = left;
+        left = left -> next;
     }
-    return newNode->next;
+    
+    while(right != NULL) {
+        temp -> next = right;
+        temp = right;
+        right = right -> next;
+    }
+    
+    ans = ans -> next;
+    return ans;
 }
 node* mergeSort(node* head){
-    if(head==NULL || head->next==NULL){
+     if( head == NULL || head -> next == NULL ) {
         return head;
     }
-    node* current=head;
-    node* midd=middle(current);
-    node* left=head;
-    node* right=midd->next;
-    midd->next=NULL;
-    left=mergeSort(left);
-    right=mergeSort(right);
-    node* result=merge(left,right);
+    
+    // break linked list into 2 halvs, after finding mid
+    node* mid = middle(head);
+    
+    node* left = head;
+    node* right = mid->next;
+    mid -> next = NULL;
+    
+    //recursive calls to sort both halves
+    left = mergeSort(left);
+    right = mergeSort(right);
+    
+    //merge both left and right halves
+    node* result = merge(left, right);
+    
     return result;
 }
-void display(node* head){
-    node* current=head;
-    while(current!=NULL){
-        cout<<current->data<<"->";
-        current=current->next;
-    }
-    cout<<"NULL"<<endl;
-}
+
 int main(){
     node* head=NULL;
     push(head,1);
@@ -91,9 +109,7 @@ int main(){
     push(head,2);
     push(head,5);
     push(head,4);
-    display(head);
-    node* newnode=mergeSort(head);
-    display(newnode);
-
+    node* mid=mergeSort(head);
+    display(mid);
     return 0;
 }
